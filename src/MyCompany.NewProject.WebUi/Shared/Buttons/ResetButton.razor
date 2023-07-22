@@ -1,0 +1,8 @@
+﻿<MudButton @onclick="OnReset" Variant="Variant.Filled" Color="Color.Secondary">
+    Reset
+</MudButton>
+
+@code {
+    [Parameter, EditorRequired]
+    public required EventCallback<MouseEventArgs> OnReset { get; init; }
+}

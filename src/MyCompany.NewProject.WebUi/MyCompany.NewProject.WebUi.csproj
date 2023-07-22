@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>6bfa3da9-cae2-4dcb-9f0f-878387090020</UserSecretsId>
+  </PropertyGroup>
+
+  <Import Project="../MyCompany.NewProject.BuildProperties" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.8" />
+    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.12.4" />
+    <PackageReference Include="MudBlazor" Version="6.4.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyCompany.NewProject.Application\MyCompany.NewProject.Application.csproj" />
+    <ProjectReference Include="..\MyCompany.NewProject.Infrastructure\MyCompany.NewProject.Infrastructure.csproj" />
+    <ProjectReference Include="..\MyCompany.NewProject.Persistence\MyCompany.NewProject.Persistence.csproj" />
+    <ProjectReference Include="..\MyCompany.NewProject.WebApi\MyCompany.NewProject.WebApi.csproj" />
+  </ItemGroup>
+
+</Project>

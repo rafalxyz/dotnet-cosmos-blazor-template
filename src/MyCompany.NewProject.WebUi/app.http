@@ -1,0 +1,19 @@
+@baseApiUrl=https://localhost:7139/api
+
+### Auth variables
+
+@tenantId=d1c4a883-d7cb-4d0a-b4e9-191cfe5e428b
+@clientId=...
+@clientSecret=...
+@apiScope=...
+@accessToken=...
+
+### Get Access Token
+
+POST https://login.microsoftonline.com/{{tenantId}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientId}}
+&scope={{apiScope}}
+&client_secret={{clientSecret}}
+&grant_type=client_credentials

@@ -1,0 +1,75 @@
+﻿@using MyCompany.NewProject.Application.Abstractions
+@using MyCompany.NewProject.Application.Abstractions.Messaging;
+@using MyCompany.NewProject.WebUi.Core.Messaging;
+@using FluentValidation;
+@typeparam TCommand where TCommand : ICommand<TResponse>
+@typeparam TResponse
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icon" Class="mr-3 mb-n1" />
+            @MudDialog.Title
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (!Ready)
+        {
+            <MudProgressCircular Indeterminate="true" />
+        }
+        else
+        {
+            <EditForm EditContext="@EditContext">
+                <FluentValidator TModel="TCommand" />
+                @ChildContent
+            </EditForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        <DialogSubmitButton Loading="_loading" OnClick="Submit" />
+        <DialogCancelButton OnClick="@(() => MudDialog.Close(DialogResult.Cancel()))" />
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter, EditorRequired]
+    public required string Icon { get; init; }
+
+    [Parameter, EditorRequired]
+    public required EditContext EditContext { get; init; }
+
+    [Parameter, EditorRequired]
+    public required RenderFragment ChildContent { get; init; }
+
+    [Parameter]
+    public bool Ready { get; init; } = true;
+
+    [CascadingParameter]
+    public required MudDialogInstance MudDialog { get; init; }
+
+    [Inject]
+    public required IDispatcher Dispatcher { get; init; }
+
+    private bool _loading = false;
+
+    private async Task Submit()
+    {
+        var isValid = EditContext.Validate();
+        if (!isValid)
+        {
+            return;
+        }
+
+        _loading = true;
+        StateHasChanged();
+        var commandResult = await Dispatcher.Send((TCommand)EditContext.Model);
+        _loading = false;
+
+        // Error notifications are automatically displayed, so there's no need for checking
+        // if the result is failure and displaying error notifications manually.
+        if (commandResult.IsSuccess)
+        {
+            MudDialog.Close(DialogResult.Ok(commandResult.Value));
+        }
+    }
+}

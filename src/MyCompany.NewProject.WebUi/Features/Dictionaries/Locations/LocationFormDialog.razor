@@ -1,0 +1,28 @@
+﻿@using MyCompany.NewProject.Application.Abstractions
+@using MyCompany.NewProject.Application.Features.Dictionaries.Locations;
+@using MyCompany.NewProject.Core.Model.Enums
+@inherits FormDialogBase<UpsertLocationCommand, ResourceId>
+
+<FormDialog TCommand="UpsertLocationCommand" TResponse="ResourceId" EditContext="@EditContext" Icon="@FormIcons.AddOrEdit(Location)">
+    <MudTextField Label="Make" @bind-Value="@Command.Name" For="@(() => Command.Name)" />
+    <MudSelect T="string" Label="Country" @bind-Value="@Command.CountryId">
+        @foreach (var country in Country.List)
+        {
+            <MudSelectItem Value="@country.Id">@country.Name</MudSelectItem>
+        }
+    </MudSelect>
+</FormDialog>
+
+@code {
+    [Parameter] public LocationDto? Location { get; init; }
+
+    protected override void OnInitialized()
+    {
+        InitializeForm(new UpsertLocationCommand
+        {
+            Id = Location?.Id,
+            Name = Location?.Name ?? string.Empty,
+            CountryId = Location?.CountryId ?? string.Empty,
+        });
+    }
+}

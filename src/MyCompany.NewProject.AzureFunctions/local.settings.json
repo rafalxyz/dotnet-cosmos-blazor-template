@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "Database:DatabaseName": "",
+    "NewProject:BaseApiUrl": "https://localhost:7139/api/",
+    "NewProject:ApiScope": "",
+    "AzureAd:TenantId": "",
+    "AzureAd:ClientId": "",
+    "AzureAd:ClientSecret": "",
+    "AppConfig:Endpoint": ""
+  },
+  "ConnectionStrings": {
+    "Database": "",
+    "ServiceBus": ""
+  }
+}

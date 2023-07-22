@@ -1,0 +1,39 @@
+﻿@page "/users"
+@using MyCompany.NewProject.Application.Features.Users
+
+<PageTitle>Users - New Project</PageTitle>
+
+<h1>Users</h1>
+
+<MudElement Class="d-flex justify-end mb-2">
+    <MudButton @onclick="@(() => OpenUserFormDialog(user: null))"
+               StartIcon="@Icons.Material.Filled.Add"
+               Variant="Variant.Filled"
+               Color="Color.Primary">
+        Add User
+    </MudButton>
+</MudElement>
+
+@if (_users is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudDataGrid Items="_users" Filterable="true" FilterCaseSensitivity="@DataGridFilterCaseSensitivity.CaseInsensitive">
+        <Columns>
+            <PropertyColumn Property="x => x.Id" Title="Id" />
+            <PropertyColumn Property="x => x.DisplayName" Title="Display Name" />
+            <PropertyColumn Property="x => x.Email" Title="Email" />
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => OpenUserFormDialog(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => OpenDeleteUserDialog(context.Item))" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="UserDto" />
+        </PagerContent>
+    </MudDataGrid>
+}

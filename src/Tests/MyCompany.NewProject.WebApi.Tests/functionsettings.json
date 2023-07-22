@@ -1,0 +1,9 @@
+{
+  "ConnectionStrings": {
+    "Database": ""
+  },
+  "NewProject": {
+    "BaseApiUrl": "http://localhost/api/",
+    "ApiScope": "api://localhost/.default"
+  }
+}

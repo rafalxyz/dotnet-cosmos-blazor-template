@@ -1,0 +1,23 @@
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["Tests/MyCompany.NewProject.WebApi.Tests/MyCompany.NewProject.WebApi.Tests.csproj", "Tests/MyCompany.NewProject.WebApi.Tests/"]
+COPY ["MyCompany.NewProject.AzureFunctions/MyCompany.NewProject.AzureFunctions.csproj", "MyCompany.NewProject.AzureFunctions/"]
+COPY ["MyCompany.NewProject.Core/MyCompany.NewProject.Core.csproj", "MyCompany.NewProject.Core/"]
+COPY ["MyCompany.NewProject.WebApi/MyCompany.NewProject.WebApi.csproj", "MyCompany.NewProject.WebApi/"]
+COPY ["MyCompany.NewProject.Application/MyCompany.NewProject.Application.csproj", "MyCompany.NewProject.Application/"]
+COPY ["MyCompany.NewProject.Persistence/MyCompany.NewProject.Persistence.csproj", "MyCompany.NewProject.Persistence/"]
+COPY ["Integration/MyCompany.NewProject.Integration.MicrosoftGraph/MyCompany.NewProject.Integration.MicrosoftGraph.csproj", "Integration/MyCompany.NewProject.Integration.MicrosoftGraph/"]
+COPY ["MyCompany.NewProject.WebUi/MyCompany.NewProject.WebUi.csproj", "MyCompany.NewProject.WebUi/"]
+COPY ["MyCompany.NewProject.Infrastructure/MyCompany.NewProject.Infrastructure.csproj", "MyCompany.NewProject.Infrastructure/"]
+RUN dotnet restore "Tests/MyCompany.NewProject.WebApi.Tests/MyCompany.NewProject.WebApi.Tests.csproj"
+COPY . .
+WORKDIR "/src/Tests/MyCompany.NewProject.WebApi.Tests"
+RUN dotnet build "MyCompany.NewProject.WebApi.Tests.csproj" -c Release -o /app/build
+
+FROM build AS integration-test
+RUN dotnet test --filter MyCompany.NewProject.WebApi.Tests --no-restore --verbosity normal

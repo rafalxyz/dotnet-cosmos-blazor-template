@@ -1,0 +1,51 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="_newProjectTheme" />
+<MudDialogProvider
+    FullWidth="true"
+    MaxWidth="MaxWidth.ExtraSmall"
+    CloseButton="true"
+    DisableBackdropClick="true"
+/>
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
+        New Project
+        <MudSpacer />
+        <LoginDisplay />
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer>
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+
+@code {
+    const string Navy = "#01334c";
+    const string Amber = "#bf9549";
+
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    MudTheme _newProjectTheme = new MudTheme
+    {
+        Palette = new PaletteLight
+        {
+            Primary = Amber,
+            Secondary = Navy,
+            AppbarBackground = Navy
+        },
+    };
+}

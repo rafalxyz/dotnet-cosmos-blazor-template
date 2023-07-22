@@ -1,0 +1,40 @@
+﻿@page "/dictionaries/locations"
+@using MyCompany.NewProject.Application.Features.Dictionaries.Locations;
+
+<PageTitle>Locations - New Project</PageTitle>
+
+<h1>Locations</h1>
+
+<MudElement Class="d-flex justify-end mb-2">
+    <MudButton @onclick="@(() => OpenLocationFormDialog(location: null))"
+               StartIcon="@Icons.Material.Filled.Add"
+               Variant="Variant.Filled"
+               Color="Color.Primary">
+        Add Location
+    </MudButton>
+</MudElement>
+
+@if (_locations is null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudDataGrid Items="_locations" Filterable="true" FilterCaseSensitivity="@DataGridFilterCaseSensitivity.CaseInsensitive">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" Title="Make" />
+            <PropertyColumn Property="x => x.CountryName" Title="Countr" />
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(() => OpenLocationFormDialog(context.Item))" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => OpenLocationDeleteDialog(context.Item))" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="LocationDto" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+

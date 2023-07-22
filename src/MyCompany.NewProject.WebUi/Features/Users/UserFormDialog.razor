@@ -1,0 +1,51 @@
+﻿@using MyCompany.NewProject.Application.Abstractions
+@using MyCompany.NewProject.Application.Features.Users;
+@using MyCompany.NewProject.Core.Results.Errors;
+@inherits FormDialogBase<AddOrEditUserCommand, ResourceId>
+
+<FormDialog TCommand="AddOrEditUserCommand" TResponse="ResourceId" EditContext="@EditContext" Icon="@FormIcons.AddOrEdit(User)">
+    <MudTextField Label="Email" InputType="InputType.Email" @bind-Value="@Command.Email" For="@(() => Command.Email)" @bind-Value:after="@(() => HandleEmailChange())" />
+    <MudTextField Label="Display Name" @bind-Value="@_displayName" Disabled />
+</FormDialog>
+
+@code {
+    [Parameter] public UserDto? User { get; init; }
+
+    private string _displayName = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        InitializeForm(new AddOrEditUserCommand
+            {
+                Id = User?.Id,
+                Email = User?.Email ?? string.Empty,
+            });
+
+        _displayName = User?.DisplayName ?? string.Empty;
+    }
+
+    private async Task HandleEmailChange()
+    {
+        ClearPropertyAsyncError(nameof(Command.Email));
+
+        if (!IsPropertyValid(nameof(Command.Email)))
+        {
+            _displayName = string.Empty;
+            return;
+        }
+
+        var result = await Dispatcher.Send(new GetUserByEmailQuery(Command.Email));
+        if (result.IsSuccess && result.Value.UserId != User?.Id)
+        {
+            SetPropertyAsyncError(nameof(Command.Email), "Email must be unique.");
+            return;
+        }
+
+        var microsoftGraphResult = await Dispatcher.Send(new GetUserFromMicrosoftGraphByEmailQuery(Command.Email));
+        _displayName = microsoftGraphResult.IsSuccess ? microsoftGraphResult.Value.DisplayName : string.Empty;
+        if (microsoftGraphResult.Error is NotFoundError)
+        {
+            SetPropertyAsyncError(nameof(Command.Email), microsoftGraphResult.Error.Message);
+        }
+    }
+}

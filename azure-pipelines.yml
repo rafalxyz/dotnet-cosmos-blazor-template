@@ -1,0 +1,72 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+trigger:
+- 'main'
+
+pool:
+  name: Default
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+
+- task: UseDotNet@2
+  displayName: Use .NET 7.0
+  inputs:
+    packageType: 'sdk'
+    version: '7.0.x'
+  
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build Solution'
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Web App'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: true
+    projects: '**/MyCompany.NewProject.WebUI.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.sourcesdirectory)\WebApp --runtime win-x64'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Azure Functions'
+  inputs:
+    command: publish
+    publishWebProjects: false
+    zipAfterPublish: true
+    projects: '**/MyCompany.NewProject.AzureFunctions.csproj'
+    arguments: '--configuration $(buildConfiguration) --output $(build.sourcesdirectory)\AzureFunctions --runtime win-x64'
+
+- task: CopyFiles@2
+  displayName: 'Copy WebApp to Artifacts'
+  inputs:
+    SourceFolder: '$(build.sourcesdirectory)\WebApp'
+    Contents: '**\*.zip'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: CopyFiles@2
+  displayName: 'Copy Azure Functions to Artifacts'
+  inputs:
+    SourceFolder: '$(build.sourcesdirectory)\AzureFunctions'
+    Contents: '**\*.zip'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Build Artifacts' 
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
